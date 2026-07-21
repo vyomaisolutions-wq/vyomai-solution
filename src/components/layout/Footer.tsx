@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Phone, MapPin, Globe, Sparkles, Heart } from "lucide-react";
+import { Mail, Phone, MapPin, Globe, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 
 export const Footer: React.FC = () => {
@@ -84,22 +84,28 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2 text-slate-400">
                 <Mail className="w-4 h-4 text-sky-400 shrink-0" />
-                <a href="mailto:contact@vyomai.com" className="hover:text-white transition-colors">contact@vyomai.com</a>
+                <a href="mailto:info@vyomaisolutions.com" className="hover:text-white transition-colors">
+                  info@vyomaisolutions.com
+                </a>
               </li>
-              <li className="flex items-center gap-2 text-slate-400">
-                <Phone className="w-4 h-4 text-sky-400 shrink-0" />
-                <span>+91 (1800) 123-VYOM</span>
+              <li className="flex items-start gap-2 text-slate-400">
+                <Phone className="w-4 h-4 text-sky-400 shrink-0 mt-1" />
+                <div className="flex flex-col gap-0.5">
+                  <a href="tel:+918853468637" className="hover:text-white transition-colors">
+                    +91 8853468637
+                  </a>
+                  <a href="tel:+919598360224" className="hover:text-white transition-colors">
+                    +91 9598360224
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="pt-8 flex items-center justify-center text-xs text-slate-500 text-center">
           <p>© {new Date().getFullYear()} VyomAi Solutions Pvt Ltd. All rights reserved.</p>
-          <div className="flex items-center gap-1">
-            Built with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 mx-1" /> Next.js & Framer Motion
-          </div>
         </div>
       </div>
     </footer>

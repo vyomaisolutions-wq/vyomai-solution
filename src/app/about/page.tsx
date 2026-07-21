@@ -98,7 +98,7 @@ export default function AboutPage() {
           <div className="lg:col-span-5 relative">
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl border-4 border-white group">
               <Image
-                src="/images/profile_meenakshi.png"
+                src="/images/profile_meenakshi.jpg"
                 alt="Leadership Profile"
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"

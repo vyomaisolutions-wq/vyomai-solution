@@ -95,8 +95,8 @@ export default function ContactPage() {
               </div>
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Direct Email</h4>
-                <a href="mailto:contact@vyomai.com" className="text-base font-bold text-slate-900 hover:text-sky-600 transition-colors">
-                  contact@vyomai.com
+                <a href="mailto:info@vyomaisolutions.com" className="text-base font-bold text-slate-900 hover:text-sky-600 transition-colors">
+                  info@vyomaisolutions.com
                 </a>
               </div>
             </div>
@@ -109,7 +109,10 @@ export default function ContactPage() {
               </div>
               <div>
                 <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">Phone & WhatsApp Support</h4>
-                <p className="text-base font-bold text-slate-900">+91 (1800) 123-VYOM</p>
+                <div className="flex flex-col text-base font-bold text-slate-900">
+                  <a href="tel:+918853468637" className="hover:text-cyan-600 transition-colors">+91 8853468637</a>
+                  <a href="tel:+919598360224" className="hover:text-cyan-600 transition-colors">+91 9598360224</a>
+                </div>
               </div>
             </div>
           </Card>
