@@ -1,0 +1,3000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VyomAi Solutions Pvt Ltd | AI, Automation & Corporate Services</title>
+    <meta name="description" content="VyomAi Solutions Pvt Ltd delivers AI chatbots, AI agents, automation, marketing strategy, and legal corporate services through a modern, user-friendly digital experience.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+        :root {
+            --bg: #e0f2fe;
+            --bg-light: #ffffff;
+            --surface: rgba(240, 249, 255, 0.95);
+            --surface-strong: #e0f2fe;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --muted: #64748b;
+            --primary: #0ea5e9;
+            --primary-dark: #1e3a8a;
+            --secondary: #06b6d4;
+            --accent: #7c3aed;
+            --border: rgba(15, 23, 42, 0.08);
+            --shadow: 0 20px 50px rgba(15, 23, 42, 0.1);
+            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.08);
+            --radius: 20px;
+            --container: 1280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #e0f2fe 100%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(14, 165, 233, 0.15), transparent 45%),
+                radial-gradient(circle at 90% 70%, rgba(6, 182, 212, 0.12), transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.06), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            width: min(calc(100% - 2rem), var(--container));
+            margin: 0 auto;
+        }
+
+        .section {
+            padding: 5rem 0;
+        }
+
+        @media (max-width: 900px) {
+            .section {
+                padding: 3.5rem 0;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .section {
+                padding: 2.5rem 0;
+            }
+        }
+
+        .section-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: var(--primary-dark);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .section-heading {
+            max-width: 42rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-heading h2 {
+            margin-top: 1rem;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            line-height: 1.15;
+            font-weight: 800;
+            background: linear-gradient(120deg, var(--primary-dark), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-heading p {
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        .service-card h3,
+        .info-card h3,
+        .contact-card h3,
+        .timeline-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .glass-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            border-radius: var(--radius);
+            backdrop-filter: blur(20px);
+        }
+
+        /* ========================================
+           MEGA MENU NAVBAR
+           ======================================== */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .site-header.scrolled {
+            box-shadow: 0 2px 16px rgba(15, 23, 42, 0.1);
+        }
+
+        .nav-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+            gap: 1rem;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 5.5rem;
+            height: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .brand:hover .brand-logo {
+            animation: logoPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .brand-logo.logo-pop {
+            animation: logoPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes logoPop {
+            0%   { transform: scale(1) rotate(0deg); }
+            30%  { transform: scale(0.82) rotate(-14deg); }
+            60%  { transform: scale(1.2) rotate(12deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+
+        .brand-name {
+            font-size: 0.95rem;
+            color: var(--text);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+
+        /* ---- Nav links ---- */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            height: 100%;
+        }
+
+        .nav-item {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.55rem 0.9rem;
+            background: none;
+            border: none;
+            font: inherit;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: #374151;
+            cursor: pointer;
+            white-space: nowrap;
+            border-radius: 8px;
+            transition: color 0.2s ease, background 0.2s ease;
+            height: 100%;
+        }
+
+        .nav-trigger:hover,
+        .nav-item.open .nav-trigger {
+            color: var(--primary-dark);
+            background: rgba(14, 165, 233, 0.06);
+        }
+
+        .nav-trigger.active {
+            color: var(--primary-dark) !important;
+            background: rgba(14, 165, 233, 0.1) !important;
+            font-weight: 700;
+        }
+
+        .nav-chevron {
+            width: 13px;
+            height: 13px;
+            transition: transform 0.25s ease;
+            opacity: 0.55;
+            flex-shrink: 0;
+        }
+
+        .nav-item.open .nav-chevron {
+            transform: rotate(180deg);
+            opacity: 0.9;
+        }
+
+        /* ---- Dropdown panel ---- */
+        .dropdown-panel {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 2px solid var(--primary);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.07);
+            box-shadow: 0 16px 48px rgba(15, 23, 42, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        .nav-item.open .dropdown-panel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-inner {
+            padding: 2rem 0 2.2rem;
+        }
+
+        .dropdown-cols {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .dropdown-col {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dropdown-section-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.6rem;
+            padding-left: 0.75rem;
+        }
+
+        .dropdown-link {
+            display: block;
+            padding: 0.65rem 0.75rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background 0.18s ease;
+            margin-bottom: 0.15rem;
+        }
+
+        .dropdown-link:hover { background: rgba(14, 165, 233, 0.07); }
+
+        .dlink-title {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.15rem;
+            transition: color 0.18s ease;
+        }
+
+        .dropdown-link:hover .dlink-title { color: var(--primary-dark); }
+
+        .dlink-desc {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.4;
+        }
+
+        /* ---- CTA button ---- */
+        .nav-cta {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.6rem 1.3rem;
+            margin-left: 0.75rem;
+            background: var(--primary-dark);
+            color: #fff !important;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-cta:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+        /* ---- Mobile toggle ---- */
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 0.35rem;
+            padding: 0.6rem;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu-toggle:hover { background: rgba(14, 165, 233, 0.15); }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 2px;
+            background: var(--primary-dark);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translateY(7px); }
+        .mobile-menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .mobile-menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translateY(-7px); }
+
+        @media (max-width: 1000px) {
+            .nav-links {
+                position: fixed;
+                top: 72px;
+                right: -100%;
+                width: min(340px, 100vw - 2rem);
+                height: calc(100vh - 72px);
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                padding: 1.25rem;
+                background: #fff;
+                border-left: 1px solid rgba(15, 23, 42, 0.08);
+                box-shadow: -8px 0 32px rgba(0, 0, 0, 0.1);
+                overflow-y: auto;
+                transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+                z-index: 90;
+            }
+
+            .nav-links.active { right: 0; }
+
+            .nav-item { height: auto; flex-direction: column; align-items: stretch; }
+
+            .nav-trigger {
+                justify-content: space-between;
+                height: auto;
+                padding: 0.9rem 0.5rem;
+                border-radius: 8px;
+                font-size: 1rem;
+            }
+
+            .dropdown-panel {
+                position: static;
+                border-top: none;
+                border-left: 3px solid rgba(14, 165, 233, 0.25);
+                border-bottom: none;
+                box-shadow: none;
+                opacity: 1;
+                visibility: hidden;
+                transform: none;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.32s ease, visibility 0.32s;
+                margin-left: 0.75rem;
+                background: rgba(240, 249, 255, 0.4);
+                border-radius: 0 8px 8px 0;
+                pointer-events: auto;
+            }
+
+            .nav-item.open .dropdown-panel {
+                visibility: visible;
+                max-height: 600px;
+            }
+
+            .dropdown-inner { padding: 0.75rem 0.25rem; }
+            .dropdown-cols { flex-direction: column; gap: 0.5rem; }
+            .dropdown-link { padding: 0.55rem 0.75rem; }
+
+            .nav-cta { margin: 1rem 0 0; justify-content: center; }
+
+            .mobile-menu-toggle { display: flex; }
+        }
+
+        @media (max-width: 640px) {
+            .brand-name { display: none; }
+            .brand-logo { width: 4.5rem; }
+            .nav-row { gap: 0.5rem; }
+        }
+
+        .button,
+        button {
+            border: 0;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            padding: 1rem 1.8rem;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+        }
+
+        .button-primary {
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.2);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .button-primary:hover {
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+        }
+
+        .button-secondary {
+            color: var(--primary-dark);
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .button-secondary:hover {
+            background: rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.4);
+        }
+
+        .button:hover,
+        .button:focus-visible {
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            padding: 5rem 0 2rem;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-copy h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin: 1.2rem 0;
+            color: var(--text);
+            font-weight: 800;
+        }
+        .hero-copy h1 span {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(14, 165, 233, 0.1);
+        }
+
+        .hero-copy p {
+            max-width: 40rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .hero-actions,
+        .hero-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.8rem;
+        }
+
+        .hero-stat {
+            padding: 1rem 1.2rem;
+            min-width: 10rem;
+        }
+
+        .hero-stat strong {
+            display: block;
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+        }
+
+        .hero-stat span {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .hero-panel {
+            position: relative;
+            padding: 2rem;
+            overflow: hidden;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.8) 100%);
+            animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(60px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-panel::before {
+            content: "";
+            position: absolute;
+            inset: 1rem;
+            border-radius: calc(var(--radius) - 8px);
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.06), rgba(6, 182, 212, 0.03));
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            animation: borderFlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderFlow {
+            0%, 100% { border-color: rgba(14, 165, 233, 0.15); box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.1); }
+            50% { border-color: rgba(14, 165, 233, 0.3); box-shadow: 0 0 20px 0 rgba(14, 165, 233, 0.15); }
+        }
+
+        .dashboard {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-top,
+        .dashboard-bottom {
+            display: grid;
+            gap: 1rem;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .dashboard-top {
+            grid-template-columns: 1.2fr 0.8fr;
+            animation-delay: 0.3s;
+        }
+
+        .dashboard-bottom {
+            grid-template-columns: repeat(3, 1fr);
+            animation-delay: 0.5s;
+        }
+
+        .dashboard-card {
+            background: rgba(240, 249, 255, 0.6);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            border-radius: 1rem;
+            padding: 1.2rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.92);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .dashboard-card:nth-child(1) { animation-delay: 0.4s; }
+        .dashboard-card:nth-child(2) { animation-delay: 0.5s; }
+        .dashboard-card:nth-child(3) { animation-delay: 0.6s; }
+        .dashboard-card:nth-child(4) { animation-delay: 0.5s; }
+        .dashboard-card:nth-child(5) { animation-delay: 0.6s; }
+        .dashboard-card:nth-child(6) { animation-delay: 0.7s; }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.12);
+            border-color: rgba(14, 165, 233, 0.25);
+            background: rgba(240, 249, 255, 0.8);
+        }
+
+        .dashboard-card h3,
+        .dashboard-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.85rem;
+            color: var(--text);
+        }
+
+        .signal-grid {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .signal-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            font-size: 0.95rem;
+        }
+
+        .signal-bar {
+            flex: 1;
+            height: 0.5rem;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.1);
+            overflow: hidden;
+        }
+
+        .signal-bar span {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--primary-dark), var(--secondary));
+            animation: pulseGrow 3s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+
+        .orbit-box {
+            min-height: 100%;
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        .orbit-core,
+        .orbit-ring,
+        .orbit-dot {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .orbit-core {
+            width: 5rem;
+            height: 5rem;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.2);
+        }
+
+        .orbit-ring {
+            width: 10.5rem;
+            height: 10.5rem;
+            border: 1px dashed rgba(14, 165, 233, 0.25);
+            animation: spin 12s linear infinite;
+        }
+
+        .orbit-dot {
+            width: 1rem;
+            height: 1rem;
+            top: 0.55rem;
+            left: calc(50% - 0.5rem);
+            background: var(--secondary);
+            box-shadow: 0 0 16px rgba(6, 182, 212, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+
+        .metric {
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .metric strong {
+            font-size: 1.35rem;
+        }
+
+        .metric span,
+        .metric p,
+        .dashboard-card p,
+        .dashboard-card small,
+        .service-card p,
+        .info-card p,
+        .contact-card p,
+        .timeline-card p,
+        .footer-grid p {
+            color: var(--text-secondary);
+        }
+
+        .dashboard-card small {
+            color: var(--muted);
+        }
+
+        .services-grid,
+        .info-grid,
+        .contact-grid,
+        .timeline-grid,
+        .footer-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .services-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .service-card,
+        .info-card,
+        .contact-card,
+        .timeline-card {
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            border: 1px solid rgba(14, 165, 233, 0.12);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.7), rgba(255, 255, 255, 0.9));
+        }
+
+        .service-card:hover,
+        .info-card:hover,
+        .contact-card:hover,
+        .timeline-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.1);
+            border-color: rgba(14, 165, 233, 0.25);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.95), rgba(255, 255, 255, 1));
+        }
+
+        .service-card::before,
+        .info-card::before,
+        .timeline-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -25% -65% auto;
+            width: 12rem;
+            height: 12rem;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .service-card:hover::before,
+        .info-card:hover::before,
+        .timeline-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 5rem;
+            height: 5rem;
+            display: inline-grid;
+            place-items: center;
+            border-radius: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.25);
+        }
+
+        .service-list {
+            list-style: none;
+            margin-top: 1rem;
+            display: grid;
+            gap: 0.7rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.95rem;
+        }
+
+        .service-list li::before {
+            content: "";
+            width: 0.35rem;
+            height: 0.35rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            flex-shrink: 0;
+        }
+
+        .service-label {
+            display: inline-block;
+            padding: 0.4rem 0.85rem;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            border-radius: 999px;
+            color: var(--primary-dark);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .timeline-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        /* ========================================
+           PROJECTS SECTION STYLES
+           ======================================== */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        .project-card {
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            border: 1px solid rgba(14, 165, 233, 0.12);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.7), rgba(255, 255, 255, 0.9));
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .project-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.3);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.95), rgba(255, 255, 255, 1));
+        }
+
+        .project-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -25% -65% auto;
+            width: 14rem;
+            height: 14rem;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-header {
+            position: relative;
+            z-index: 2;
+        }
+
+        .project-category {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 999px;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .project-objective {
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .project-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .project-stack-item {
+            padding: 0.4rem 0.8rem;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            border-radius: 8px;
+            color: var(--primary-dark);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .project-card:hover .project-stack-item {
+            background: rgba(14, 165, 233, 0.12);
+            border-color: rgba(14, 165, 233, 0.25);
+        }
+
+        .project-outcome {
+            padding: 1rem;
+            background: rgba(6, 182, 212, 0.05);
+            border-left: 3px solid var(--secondary);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+        }
+
+        .project-outcome strong {
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.3rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
+            text-decoration: none;
+        }
+
+        .project-link-github {
+            color: var(--text);
+            background: rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(15, 23, 42, 0.1);
+        }
+
+        .project-link-github:hover {
+            background: rgba(15, 23, 42, 0.1);
+            border-color: rgba(15, 23, 42, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .project-link-live {
+            color: #fff;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.15);
+        }
+
+        .project-link-live:hover {
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.25);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1080px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-panel {
+                min-height: auto;
+            }
+
+            .projects-grid {
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            }
+        }
+
+        @media (max-width: 780px) {
+            .hero {
+                padding: 2.5rem 0 1.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-card {
+                padding: 2rem;
+            }
+
+            .project-card h3 {
+                font-size: 1.4rem;
+            }
+
+            .button {
+                width: 100%;
+                padding: 0.9rem 1.2rem;
+            }
+
+            .hero-actions .button {
+                width: 100%;
+            }
+
+            .hero-stat {
+                min-width: 0;
+            }
+
+            .project-links {
+                flex-direction: column;
+            }
+
+            .project-link {
+                justify-content: center;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .timeline-step {
+            display: inline-flex;
+            width: 2.4rem;
+            height: 2.4rem;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            margin-bottom: 1rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            background: rgba(14, 165, 233, 0.12);
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr 1fr;
+            align-items: start;
+            gap: 2rem;
+        }
+
+        .contact-panel {
+            padding: 1.8rem;
+        }
+
+        .contact-list {
+            list-style: none;
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-list li {
+            display: flex;
+            gap: 0.9rem;
+            align-items: flex-start;
+        }
+
+        .contact-form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.95rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            background: rgba(240, 249, 255, 0.5);
+            color: var(--text);
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder {
+            color: var(--muted);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: var(--primary-dark);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.08);
+            background: rgba(240, 249, 255, 0.8);
+        }
+
+        .contact-form textarea {
+            min-height: 9rem;
+        }
+
+        .mini-note {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        footer {
+            padding: 2rem 0 3rem;
+        }
+
+        .footer-grid {
+            grid-template-columns: 1.2fr 0.8fr 0.8fr;
+            padding: 1.7rem;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: 0.65rem;
+            color: var(--muted);
+        }
+
+        .footer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.55rem 0.85rem;
+            border-radius: 999px;
+            background: rgba(14, 165, 233, 0.08);
+            color: var(--primary-dark);
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes floatBlob {
+            0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+            50% { transform: translate3d(0, 1rem, 0) scale(1.05); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseGrow {
+            0%, 100% { transform: scaleX(0.94); }
+            50% { transform: scaleX(1); }
+        }
+
+        @media (max-width: 1080px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .info-grid,
+            .dashboard-top,
+            .dashboard-bottom {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 780px) {
+            .site-header {
+                position: sticky;
+                top: 0;
+            }
+
+            .hero-actions,
+            .hero-stats,
+            .field-row,
+            .info-grid,
+            .timeline-grid,
+            .services-grid,
+            .projects-grid,
+            .dashboard-top,
+            .dashboard-bottom {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .hero-copy h1 {
+                font-size: clamp(2.35rem, 11vw, 3.8rem);
+            }
+
+            .section {
+                padding: 4rem 0;
+            }
+
+            .split-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card,
+            .info-card,
+            .timeline-card {
+                padding: 1.5rem;
+            }
+
+            .card-icon {
+                width: 3.5rem;
+                height: 3.5rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        .locations-map-wrapper {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+            align-items: start;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.4), rgba(255, 255, 255, 0.6));
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            border-radius: var(--radius);
+        }
+
+        .world-map {
+            width: 100%;
+            height: 500px;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.15);
+            z-index: 1;
+        }
+
+        .world-map .leaflet-container {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #faf5ff 100%);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .world-map .leaflet-control-zoom {
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+        }
+
+        .world-map .leaflet-control-zoom a {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-dark);
+            font-weight: 700;
+            border-bottom: 1px solid rgba(14, 165, 233, 0.1);
+        }
+
+        .world-map .leaflet-control-zoom a:hover {
+            background: rgba(255, 255, 255, 1);
+            color: var(--primary);
+        }
+
+        /* Custom marker styling */
+        .leaflet-marker-icon {
+            background: none;
+            border: none;
+        }
+
+        .custom-marker {
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .custom-marker:hover,
+        .custom-marker.active {
+            transform: scale(1.2);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.5);
+            border-color: #fff;
+        }
+
+        .location-marker {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-marker:hover circle:first-child {
+            r: 28;
+        }
+
+        .location-marker:hover circle:last-of-type {
+            filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.6));
+        }
+
+        .marker-pulse {
+            animation: svgPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes svgPulse {
+            0%, 100% {
+                r: 20;
+                opacity: 0.6;
+            }
+            50% {
+                r: 28;
+                opacity: 0.2;
+            }
+        }
+
+        .location-details-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .location-details-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .location-details-container::-webkit-scrollbar-track {
+            background: rgba(14, 165, 233, 0.05);
+            border-radius: 10px;
+        }
+
+        .location-details-container::-webkit-scrollbar-thumb {
+            background: rgba(14, 165, 233, 0.2);
+            border-radius: 10px;
+        }
+
+        .location-details-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(14, 165, 233, 0.3);
+        }
+
+        .location-detail-item {
+            padding: 1.2rem;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(14, 165, 233, 0.1);
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .location-detail-item:hover,
+        .location-detail-item.active {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(14, 165, 233, 0.3);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+        }
+
+        .detail-marker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+        }
+
+        .location-detail-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .location-detail-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-cities {
+            font-size: 0.8rem !important;
+            color: var(--primary-dark) !important;
+            font-weight: 600;
+            margin-top: 0.75rem;
+        }
+
+        .locations-map-container {
+            margin-top: 3rem;
+        }
+
+        /* ========================================
+           INDUSTRIES SECTION
+           ======================================== */
+        .industries-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .industry-card {
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            border: 1px solid rgba(14, 165, 233, 0.12);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.7), rgba(255, 255, 255, 0.9));
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .industry-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.1);
+            border-color: rgba(14, 165, 233, 0.25);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.95), rgba(255, 255, 255, 1));
+        }
+
+        .industry-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -25% -65% auto;
+            width: 12rem;
+            height: 12rem;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .industry-card:hover::before {
+            opacity: 1;
+        }
+
+        .industry-icon {
+            font-size: 3rem;
+            line-height: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .industry-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            position: relative;
+            z-index: 2;
+            margin: 0.5rem 0;
+        }
+
+        .industry-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            position: relative;
+            z-index: 2;
+            margin: 0;
+        }
+
+        @media (max-width: 1080px) {
+            .industries-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 780px) {
+            .industries-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .industry-card {
+                padding: 1.5rem;
+            }
+
+            .industry-icon {
+                font-size: 2.5rem;
+            }
+
+            .industry-card h3 {
+                font-size: 1rem;
+            }
+
+            .industry-card p {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .industries-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
+
+        /* ========================================
+           SERVICES SECTION WITH SIDEBAR
+           ======================================== */
+        .services-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .services-sidebar {
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .services-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            padding: 1rem;
+            background: rgba(240, 249, 255, 0.5);
+            border: 1px solid rgba(14, 165, 233, 0.1);
+            border-radius: 12px;
+        }
+
+        .services-nav-link {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+            margin-left: 0;
+        }
+
+        .services-nav-link:hover {
+            color: var(--primary-dark);
+            background: rgba(14, 165, 233, 0.06);
+            border-left-color: var(--primary);
+            padding-left: calc(1rem - 3px);
+        }
+
+        .services-nav-link.active {
+            color: var(--primary-dark);
+            background: rgba(14, 165, 233, 0.1);
+            border-left-color: var(--primary-dark);
+            padding-left: calc(1rem - 3px);
+            font-weight: 700;
+        }
+
+        .services-content {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .services-group {
+            scroll-margin-top: 100px;
+        }
+
+        .services-group-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(14, 165, 233, 0.1);
+        }
+
+        @media (max-width: 1080px) {
+            .services-layout {
+                grid-template-columns: 180px 1fr;
+                gap: 2rem;
+            }
+
+            .services-sidebar { top: 90px; }
+            .services-group-title { font-size: 1.4rem; }
+        }
+
+        @media (max-width: 900px) {
+            .services-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .services-sidebar {
+                position: static;
+                order: -1;
+            }
+
+            .services-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                padding: 0;
+                background: none;
+                border: none;
+            }
+
+            .services-nav-link {
+                padding: 0.6rem 1.2rem;
+                border: 1px solid rgba(14, 165, 233, 0.2);
+                border-left: none;
+                margin: 0;
+                background: rgba(240, 249, 255, 0.5);
+                border-radius: 20px;
+            }
+
+            .services-nav-link:hover,
+            .services-nav-link.active {
+                border-left: none;
+                padding-left: 1.2rem;
+                background: rgba(14, 165, 233, 0.12);
+            }
+
+            .services-group-title { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 640px) {
+            .services-nav { flex-direction: column; }
+            .services-nav-link {
+                border-left: 3px solid transparent;
+                background: rgba(240, 249, 255, 0.4);
+            }
+        }
+
+
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .location-card {
+            position: relative;
+            padding: 2rem;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.5), rgba(255, 255, 255, 0.8));
+            border: 1px solid rgba(14, 165, 233, 0.15);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+            overflow: hidden;
+        }
+
+        .location-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% -50%, rgba(14, 165, 233, 0.05), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .location-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(14, 165, 233, 0.3);
+            background: linear-gradient(135deg, rgba(240, 249, 255, 0.8), rgba(255, 255, 255, 0.95));
+            box-shadow: 0 16px 40px rgba(14, 165, 233, 0.12);
+        }
+
+        .location-card:hover::before {
+            opacity: 1;
+        }
+
+        .location-marker {
+            position: relative;
+            width: 5rem;
+            height: 5rem;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .marker-dot {
+            position: relative;
+            z-index: 2;
+            width: 3.5rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.3);
+            position: relative;
+        }
+
+        .location-card:hover .marker-dot {
+            transform: scale(1.15);
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+        }
+
+        .location-card h3 {
+            margin-top: 1rem;
+            font-size: 1.3rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .location-card p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .location-details {
+            font-size: 0.85rem !important;
+            color: var(--primary-dark) !important;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        @keyframes markerPulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0.6;
+            }
+        }
+
+        @media (max-width: 1080px) {
+            .locations-map-wrapper {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .world-map {
+                height: 400px;
+            }
+
+            .location-details-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 780px) {
+            .locations-map-wrapper {
+                padding: 1rem;
+            }
+
+            .world-map {
+                height: 350px;
+                margin-bottom: 1.5rem;
+            }
+
+            .location-details-container {
+                grid-template-columns: 1fr;
+            }
+
+            .location-detail-item {
+                padding: 1rem;
+            }
+
+            .detail-marker {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.7rem;
+            }
+
+            .location-detail-item h3 {
+                font-size: 1rem;
+            }
+
+            .location-detail-item p {
+                font-size: 0.8rem;
+            }
+
+            .custom-marker {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="site-header" id="mainHeader">
+            <div class="container nav-row">
+                <a href="/" class="brand" aria-label="VyomAi Solutions Pvt Ltd home">
+                    <img src="/images/logo-vyom.jpeg" alt="VyomAi Solutions Logo" class="brand-logo" id="brandLogo">
+                    <span class="brand-name">VyomAi Solutions Pvt Ltd</span>
+                </a>
+
+                <nav class="nav-links" id="mainNav" aria-label="Primary navigation">
+
+                    <!-- About Us -->
+                    <div class="nav-item has-dropdown">
+                        <a href="/about" class="nav-trigger" aria-expanded="false">About Us <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 6 8 10 12 6"/></svg></a>
+                        <div class="dropdown-panel">
+                            <div class="container dropdown-inner">
+                                <div class="dropdown-cols">
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">Company</p>
+                                        <a href="/about#home" class="dropdown-link">
+                                            <span class="dlink-title">Who We Are</span>
+                                            <span class="dlink-desc">Our mission, values and AI-first approach</span>
+                                        </a>
+                                        <a href="/about#why-vyomai" class="dropdown-link">
+                                            <span class="dlink-title">Why VyomAi</span>
+                                            <span class="dlink-desc">What sets us apart from the rest</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">More</p>
+                                        <a href="/about#process" class="dropdown-link">
+                                            <span class="dlink-title">Our Process</span>
+                                            <span class="dlink-desc">Discovery to delivery in clear steps</span>
+                                        </a>
+                                        <a href="/about#presence" class="dropdown-link">
+                                            <span class="dlink-title">Global Presence</span>
+                                            <span class="dlink-desc">India, USA, UAE, Singapore, UK & more</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Services -->
+                    <div class="nav-item has-dropdown">
+                        <a href="/services" class="nav-trigger" aria-expanded="false">Services <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 6 8 10 12 6"/></svg></a>
+                        <div class="dropdown-panel">
+                            <div class="container dropdown-inner">
+                                <div class="dropdown-cols">
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">AI & Automation</p>
+                                        <a href="/services#services-ai" class="dropdown-link">
+                                            <span class="dlink-title">Agentic AI</span>
+                                            <span class="dlink-desc">Intelligent task loops and memory systems</span>
+                                        </a>
+                                        <a href="/services#services-ai" class="dropdown-link">
+                                            <span class="dlink-title">NLP & LLMs</span>
+                                            <span class="dlink-desc">Conversational engines and reasoning logic</span>
+                                        </a>
+                                        <a href="/services#services-ai" class="dropdown-link">
+                                            <span class="dlink-title">AI & Computer Vision</span>
+                                            <span class="dlink-desc">Object detection, classification and analysis</span>
+                                        </a>
+                                        <a href="/services#services-ai" class="dropdown-link">
+                                            <span class="dlink-title">Workflow Automation</span>
+                                            <span class="dlink-desc">Automated integrations and pipeline flows</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">App & Web Dev</p>
+                                        <a href="/services#services-ai" class="dropdown-link">
+                                            <span class="dlink-title">Web Design & Development</span>
+                                            <span class="dlink-desc">High-performance custom web applications</span>
+                                        </a>
+                                        <a href="/services#services-ai" class="dropdown-link">
+                                            <span class="dlink-title">Mobile App Development</span>
+                                            <span class="dlink-desc">Cross-platform iOS and Android apps</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">Business Services</p>
+                                        <a href="/services#services-business" class="dropdown-link">
+                                            <span class="dlink-title">Marketing Services</span>
+                                            <span class="dlink-desc">Growth strategy, paid ads and funnel setup</span>
+                                        </a>
+                                        <a href="/services#services-business" class="dropdown-link">
+                                            <span class="dlink-title">Legal & Corporate</span>
+                                            <span class="dlink-desc">Compliance, documentation and registration</span>
+                                        </a>
+                                        <a href="/services#services-business" class="dropdown-link">
+                                            <span class="dlink-title">End-to-End Advisory</span>
+                                            <span class="dlink-desc">Consulting from business plan to execution</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Technologies -->
+                    <div class="nav-item has-dropdown">
+                        <a href="/technologies" class="nav-trigger" aria-expanded="false">Technologies <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 6 8 10 12 6"/></svg></a>
+                        <div class="dropdown-panel">
+                            <div class="container dropdown-inner">
+                                <div class="dropdown-cols">
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">AI & Automation</p>
+                                        <a href="/technologies" class="dropdown-link">
+                                            <span class="dlink-title">Agentic Frameworks</span>
+                                            <span class="dlink-desc">LangGraph & LangChain workflows</span>
+                                        </a>
+                                        <a href="/technologies" class="dropdown-link">
+                                            <span class="dlink-title">LLMs & Vector Search</span>
+                                            <span class="dlink-desc">Claude Sonnet, GPT-4 & FAISS</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">Web & App Dev</p>
+                                        <a href="/technologies" class="dropdown-link">
+                                            <span class="dlink-title">Modern Frontend</span>
+                                            <span class="dlink-desc">React, HTML5 & Vanilla CSS</span>
+                                        </a>
+                                        <a href="/technologies" class="dropdown-link">
+                                            <span class="dlink-title">Backend & APIs</span>
+                                            <span class="dlink-desc">Node.js, Express & RESTful APIs</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">Performance Marketing</p>
+                                        <a href="/technologies" class="dropdown-link">
+                                            <span class="dlink-title">Paid Media & Ads</span>
+                                            <span class="dlink-desc">Meta Ads, Google Ads & Retargeting</span>
+                                        </a>
+                                        <a href="/technologies" class="dropdown-link">
+                                            <span class="dlink-title">Analytics & CRMs</span>
+                                            <span class="dlink-desc">GA4, HubSpot & CRM automation</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Industries -->
+                    <div class="nav-item has-dropdown">
+                        <a href="/industries" class="nav-trigger" aria-expanded="false">Industries <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 6 8 10 12 6"/></svg></a>
+                        <div class="dropdown-panel">
+                            <div class="container dropdown-inner">
+                                <div class="dropdown-cols">
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">Sectors We Serve</p>
+                                        <a href="/industries" class="dropdown-link">
+                                            <span class="dlink-title">Healthcare</span>
+                                            <span class="dlink-desc">Patient journey AI & medical intelligence</span>
+                                        </a>
+                                        <a href="/industries" class="dropdown-link">
+                                            <span class="dlink-title">Aerospace</span>
+                                            <span class="dlink-desc">Real-time flight data & decision support</span>
+                                        </a>
+                                        <a href="/industries" class="dropdown-link">
+                                            <span class="dlink-title">Finance & Legal</span>
+                                            <span class="dlink-desc">Invoice automation & compliance AI</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">More Industries</p>
+                                        <a href="/industries" class="dropdown-link">
+                                            <span class="dlink-title">Research & Education</span>
+                                            <span class="dlink-desc">Medical journal intelligence & analysis</span>
+                                        </a>
+                                        <a href="/industries" class="dropdown-link">
+                                            <span class="dlink-title">Enterprise & SMB</span>
+                                            <span class="dlink-desc">Cross-industry automation & growth</span>
+                                        </a>
+                                        <a href="/industries" class="dropdown-link">
+                                            <span class="dlink-title">Startups</span>
+                                            <span class="dlink-desc">Fast AI adoption for early-stage teams</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Portfolio -->
+                    <div class="nav-item has-dropdown">
+                        <a href="/portfolio" class="nav-trigger" aria-expanded="false">Portfolio <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 6 8 10 12 6"/></svg></a>
+                        <div class="dropdown-panel">
+                            <div class="container dropdown-inner">
+                                <div class="dropdown-cols">
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">Featured Projects</p>
+                                        <a href="/portfolio#projects" class="dropdown-link">
+                                            <span class="dlink-title">Patient Journey Agent</span>
+                                            <span class="dlink-desc">Healthcare AI · 95%+ accuracy on 100+ recordings</span>
+                                        </a>
+                                        <a href="/portfolio#projects" class="dropdown-link">
+                                            <span class="dlink-title">Avonica</span>
+                                            <span class="dlink-desc">Aerospace · Real-time flight data intelligence</span>
+                                        </a>
+                                    </div>
+                                    <div class="dropdown-col">
+                                        <p class="dropdown-section-title">&nbsp;</p>
+                                        <a href="/portfolio#projects" class="dropdown-link">
+                                            <span class="dlink-title">Invoice Verification System</span>
+                                            <span class="dlink-desc">Document AI · 100% reconciliation accuracy</span>
+                                        </a>
+                                        <a href="/portfolio#projects" class="dropdown-link">
+                                            <span class="dlink-title">Medical Journal Agent</span>
+                                            <span class="dlink-desc">Research AI · NLP-driven knowledge database</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="/#contact" class="nav-cta">Contact Us</a>
+                </nav>
+
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle mobile menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- Who We Are / Hero Section -->
+            <section class="hero section" id="home">
+                <div class="container hero-grid" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 4rem; align-items: center;">
+                    <div class="hero-copy reveal">
+                        <span class="section-tag">Who We Are</span>
+                        <h1 style="font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.1; margin: 1.2rem 0; color: var(--text);">
+                            Building <span>Intelligent Solutions</span> That <span>Transform Businesses</span>
+                        </h1>
+                        <p style="font-size: 1.15rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem;">
+                            At VyomAI, we help organizations unlock growth and efficiency through a unified suite of technology, growth marketing, and corporate solutions. From intelligent agent workflows and custom web/mobile applications to performance marketing and corporate compliance, we build services that deliver measurable business outcomes—not just promises.
+                        </p>
+                        <p style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7;">
+                            Our multidisciplinary team combines expertise in AI engineering, software development, growth marketing, and legal advisory to build operations that scale. Whether you're a startup launching a product or an enterprise streamlining compliance, we help you innovate with confidence and grow with purpose.
+                        </p>
+                        <div class="hero-actions" style="margin-top: 2rem;">
+                            <a class="button button-primary" href="#contact">Schedule a Free Consultation</a>
+                            <a class="button button-secondary" href="#values">Explore Core Values</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Numbers That Matter Stats Card -->
+                    <div class="glass-card reveal" style="padding: 2.5rem; display: flex; flex-direction: column; gap: 2rem; background: var(--surface); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.12); box-shadow: var(--shadow);">
+                        <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text); border-bottom: 2px solid var(--border); padding-bottom: 0.8rem; margin-bottom: 0.5rem;">Numbers That Matter</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 1.5rem;">
+                            <div>
+                                <strong style="font-size: 2rem; font-weight: 800; color: var(--primary-dark); display: block; line-height: 1.2;">100+</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Projects Delivered</span>
+                            </div>
+                            <div>
+                                <strong style="font-size: 2rem; font-weight: 800; color: var(--primary-dark); display: block; line-height: 1.2;">98%</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Client Satisfaction</span>
+                            </div>
+                            <div>
+                                <strong style="font-size: 2rem; font-weight: 800; color: var(--primary-dark); display: block; line-height: 1.2;">25+</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Industry Experts</span>
+                            </div>
+                            <div>
+                                <strong style="font-size: 2rem; font-weight: 800; color: var(--primary-dark); display: block; line-height: 1.2;">15+</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Industries Served</span>
+                            </div>
+                            <div>
+                                <strong style="font-size: 2rem; font-weight: 800; color: var(--primary-dark); display: block; line-height: 1.2;">10+</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Countries Reached</span>
+                            </div>
+                            <div>
+                                <strong style="font-size: 2rem; font-weight: 800; color: var(--primary-dark); display: block; line-height: 1.2;">24×7</strong>
+                                <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Global Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mission & Vision Section -->
+            <section class="section" id="mission-vision" style="padding-top: 2rem;">
+                <div class="container">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 2.5rem;">
+                        <!-- Mission Card -->
+                        <div class="glass-card reveal" style="padding: 3rem; background: var(--surface); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.12); box-shadow: var(--shadow); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="font-size: 2.5rem; color: var(--primary);">🎯</div>
+                            <span class="section-tag" style="margin-top: 0.5rem;">Our Mission</span>
+                            <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text); line-height: 1.2;">Empowering Businesses with Scalable Tech & Growth Solutions</h2>
+                            <p style="color: var(--text-secondary); line-height: 1.7;">
+                                Our mission is to make advanced technology, high-impact growth marketing, and professional corporate support accessible and practical for every organization. We design workflows that automate operations, build applications that delight users, launch campaigns that acquire customers, and manage compliance to secure your business at every stage.
+                            </p>
+                        </div>
+                        
+                        <!-- Vision Card -->
+                        <div class="glass-card reveal" style="padding: 3rem; background: var(--surface); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.12); box-shadow: var(--shadow); position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="font-size: 2.5rem; color: var(--secondary);">✨</div>
+                            <span class="section-tag" style="margin-top: 0.5rem;">Our Vision</span>
+                            <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text); line-height: 1.2;">Creating a Future of Connected Business Operations</h2>
+                            <p style="color: var(--text-secondary); line-height: 1.7;">
+                                We envision a world where businesses of every size can seamlessly integrate AI, scalable development, performance marketing, and corporate compliance to innovate faster and operate smarter. Our goal is to be a trusted global partner supporting your growth journey from inception to scale.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI-First & Multi-Service Approach & Leadership Philosophy -->
+            <section class="section" id="philosophy" style="padding-top: 2rem;">
+                <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 3rem;">
+                    <!-- AI-First Card -->
+                    <div class="glass-card reveal" style="padding: 3rem; background: var(--surface); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                        <span class="section-tag">Foundational Principle</span>
+                        <h2 style="font-size: 2rem; font-weight: 700; color: var(--text);">AI-First & Multi-Service Approach</h2>
+                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 1.05rem;">
+                            At VyomAI, we believe business growth requires a connected ecosystem. We combine advanced language models and intelligent automations with custom web/mobile design, strategic marketing campaigns, and corporate legal frameworks. This integrated approach ensures that your systems, code, customer acquisition channels, and regulatory structures work in complete alignment, accelerating innovation with confidence.
+                        </p>
+                    </div>
+
+                    <!-- Leadership Philosophy Card -->
+                    <div class="glass-card reveal" style="padding: 3rem; background: var(--surface); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                        <span class="section-tag">Leadership View</span>
+                        <h2 style="font-size: 2rem; font-weight: 700; color: var(--text);">Leadership Philosophy</h2>
+                        <p style="color: var(--text-secondary); line-height: 1.75; font-size: 1.05rem;">
+                            We believe exceptional technology and growth systems begin with understanding people. Our leadership philosophy is centered on engineering excellence, ethical advisory, client success, and continuous compliance. Every decision we make is driven by creating sustainable value, empowering our team, and supporting responsible business transformation.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why VyomAI & Why Clients Trust Us -->
+            <section class="section" id="why-vyomai" style="padding-top: 2rem;">
+                <div class="container" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 4rem; align-items: start;">
+                    <!-- Left: Why VyomAI (6 cards grid) -->
+                    <div class="reveal">
+                        <span class="section-tag">Value Proposition</span>
+                        <h2 style="font-size: 2.2rem; font-weight: 700; color: var(--text); margin-bottom: 2.5rem;">Why VyomAI</h2>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                            <div class="glass-card" style="padding: 1.8rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12);">
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">🎯 Business First</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Every system, campaign, and registration is built to support your core business objectives—not trends.</p>
+                            </div>
+                            <div class="glass-card" style="padding: 1.8rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12);">
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">🛡️ Enterprise Ready</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Built for scaling technology, high-volume marketing campaigns, and corporate compliance securely.</p>
+                            </div>
+                            <div class="glass-card" style="padding: 1.8rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12);">
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">⚡ Rapid Delivery</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Agile development methodologies accelerate your software launches and marketing configurations.</p>
+                            </div>
+                            <div class="glass-card" style="padding: 1.8rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12);">
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">🚀 Innovation Driven</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">We constantly integrate the latest advancements in AI models, frontend development, and media channels.</p>
+                            </div>
+                            <div class="glass-card" style="padding: 1.8rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12);">
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">🤝 Transparent Partnership</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">Clear communications, predictable execution timelines, and measurable marketing metrics.</p>
+                            </div>
+                            <div class="glass-card" style="padding: 1.8rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12);">
+                                <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">⚙️ End-to-End Expertise</h3>
+                                <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">From tech engineering and campaign setup to corporate legal registration and continuous optimization.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Why Clients Trust Us (List card) -->
+                    <div class="glass-card reveal" style="padding: 2.5rem; background: var(--surface); border-radius: var(--radius); border: 1px solid rgba(14, 165, 233, 0.12); box-shadow: var(--shadow); width: 100%;">
+                        <span class="section-tag">Trust Factors</span>
+                        <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text); margin-top: 0.5rem; margin-bottom: 1.8rem;">Why Clients Trust Us</h2>
+                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Unified tech, growth & compliance solutions
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> High engineering & compliance standards
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Transparent cross-channel communication
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Agile delivery & execution frameworks
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Scalable cloud & campaign architectures
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Dedicated tech, media & corporate specialists
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Comprehensive post-launch & compliance support
+                            </li>
+                            <li style="display: flex; gap: 0.8rem; align-items: flex-start; color: var(--text-secondary); font-weight: 500; font-size: 0.95rem;">
+                                <span style="color: var(--primary); font-weight: bold;">✔</span> Long-term strategic business partnership
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Our Core Values -->
+            <section class="section" id="values" style="padding-top: 2rem;">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <span class="section-tag">Company Culture</span>
+                        <h2>Our Core Values</h2>
+                        <p>We hold ourselves to high ethical and engineering standards to provide responsible, reliable technology and growth solutions.</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem;">
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">💡</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Innovation with Purpose</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">We build technology and launch growth campaigns that solve real business challenges and create measurable value.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">💎</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Client Success First</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">Your growth defines our success. Every decision is guided by the impact it creates for your software, traffic, and compliance.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">🛡️</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Integrity & Transparency</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">We believe lasting partnerships are built on honesty, regulatory accountability, and open communication.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">🔒</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Security by Design</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">Every application is developed and every compliance structure is designed with privacy and security at its foundation.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">⚡</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Excellence in Execution</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">We pursue technical and commercial excellence through rigorous engineering, testing, and media optimization.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">📚</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Continuous Learning</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">Technological and marketing frameworks evolve rapidly, and so do we. We constantly learn, experiment, and optimize.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 0.8rem;">
+                            <div style="font-size: 2rem;">🌱</div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text);">Long-Term Partnership</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-top: 0.2rem;">We don't simply deliver files—we build lasting operational structures that support your business growth for years to come.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Our Process Timeline Section -->
+            <section class="section" id="process" style="padding-top: 2rem;">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <span class="section-tag">Execution Framework</span>
+                        <h2>Our Process</h2>
+                        <p>We work in clear, milestones-driven iterations to ensure rapid execution and high predictability across all service paths.</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3.5rem; position: relative;">
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">01</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Discovery</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">We understand your business goals, current codebase, marketing channels, and corporate needs.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">02</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Strategy</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">We design a tailored tech roadmap, growth media model, and corporate compliance structure.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">03</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Design</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">We construct scalable system architecture, UI/UX mockups, and customer marketing flows.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">04</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Development</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">Our specialists write clean code, configure AI automations, and build growth campaign funnels.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">05</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Testing</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">We run quality validation across codebases, media tracking setups, and regulatory document sets.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">06</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Deployment</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">We deploy apps to production environments, launch advertising media live, and submit filings.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">07</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Optimization</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">We monitor traffic conversions, refine backend logic, and optimize advertising budgets.</p>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); position: relative;">
+                            <span style="font-size: 2.5rem; font-weight: 800; color: rgba(14, 165, 233, 0.15); position: absolute; top: 1rem; right: 1.5rem; font-family: monospace;">08</span>
+                            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.8rem; margin-top: 1rem;">Continuous Support</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6;">Our partnership continues with ongoing software updates, scaling, and compliance advisory.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Industries We Serve Section -->
+            <section class="section" id="industries" style="padding-top: 2rem;">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <span class="section-tag">Market Coverage</span>
+                        <h2>Industries We Serve</h2>
+                        <p>We deliver tailored software, marketing frameworks, and corporate support structures globally.</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.5rem; margin-top: 3rem;">
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🏥</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Healthcare</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🏦</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Banking & Finance</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🛒</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Retail & E-commerce</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🏭</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Manufacturing</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🎓</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Education</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🚚</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Logistics</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🏠</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Real Estate</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">📞</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Telecommunications</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🎬</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Media & Entertainment</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">🏛️</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Government</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">📋</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Insurance</h3>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 1.5rem; background: var(--surface); border-radius: 12px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; align-items: center; gap: 1rem;">
+                            <div style="font-size: 2rem;">⚡</div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text);">Energy & Utilities</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technology Stack Section -->
+            <section class="section" id="tech-stack" style="padding-top: 2rem;">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <span class="section-tag">Our Tools</span>
+                        <h2>Technology & Platform Stack</h2>
+                        <p>We leverage modern languages, secure clouds, and flexible media networks to support engineering and growth.</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 3.5rem;">
+                        <div class="glass-card reveal" style="padding: 2.5rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem;">🤖 Artificial Intelligence</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">LLMs</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Generative AI</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">NLP</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Computer Vision</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Workflow Automation</span>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2.5rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem;">📱 App & Web Development</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">React / Next.js</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Flutter / React Native</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Node.js / FastAPI</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">iOS & Android</span>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2.5rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem;">📈 Marketing & Analytics</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Google & Meta Ads</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">SEO Optimization</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Funnel Tracking</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">HubSpot / CRMs</span>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2.5rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem;">💼 Corporate & Legal</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">MCA Filings</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Trademark Registration</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Compliance Auditing</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Agreement Drafting</span>
+                            </div>
+                        </div>
+                        <div class="glass-card reveal" style="padding: 2.5rem; background: var(--surface); border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.12); display: flex; flex-direction: column; gap: 1.2rem;">
+                            <h3 style="font-size: 1.3rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem;">🗄️ Databases & Clouds</h3>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">AWS / GCP / Azure</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">PostgreSQL / Redis</span>
+                                <span style="background: rgba(14, 165, 233, 0.08); color: var(--primary-dark); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Docker / CI-CD</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Global Presence Map Section -->
+            <section class="section" id="presence" style="padding-top: 2rem;">
+                <div class="container">
+                    <div class="section-heading reveal">
+                        <span class="section-tag">Global Presence</span>
+                        <h2>Serving businesses across India, United States, United Arab Emirates, Singapore, United Kingdom, Canada, Australia, Germany, and Europe</h2>
+                        <p>
+                            We deliver enterprise software, media strategies, and compliance frameworks with global expertise and local understanding.
+                        </p>
+                    </div>
+
+                    <div class="locations-map-wrapper reveal">
+                        <div id="locationMap" class="world-map"></div>
+                        
+                        <!-- Location details sidebar -->
+                        <div class="location-details-container">
+                            <div class="location-detail-item active" data-location="India" data-lat="28.5921" data-lng="77.3971">
+                                <div class="detail-marker">IN</div>
+                                <h3>India</h3>
+                                <p>Primary operations hub for technology engineering and marketing operations</p>
+                                <p class="detail-cities">Noida, Electronic City, Gautam Buddha Nagar (NCR)</p>
+                            </div>
+                            <div class="location-detail-item" data-location="USA" data-lat="40.7128" data-lng="-74.0060">
+                                <div class="detail-marker">US</div>
+                                <h3>United States</h3>
+                                <p>Strategic partnerships, media campaigns and client advisory support</p>
+                                <p class="detail-cities">New York, San Francisco, Texas</p>
+                            </div>
+                            <div class="location-detail-item" data-location="UAE" data-lat="25.2048" data-lng="55.2708">
+                                <div class="detail-marker">AE</div>
+                                <h3>United Arab Emirates</h3>
+                                <p>Regional hub for Middle East and corporate compliance services</p>
+                                <p class="detail-cities">Dubai, Abu Dhabi</p>
+                            </div>
+                            <div class="location-detail-item" data-location="Singapore" data-lat="1.3521" data-lng="103.8198">
+                                <div class="detail-marker">SG</div>
+                                <h3>Singapore</h3>
+                                <p>Asia-Pacific excellence hub for corporate setups and global scaling</p>
+                                <p class="detail-cities">Singapore</p>
+                            </div>
+                            <div class="location-detail-item" data-location="UK" data-lat="51.5074" data-lng="-0.1278">
+                                <div class="detail-marker">UK</div>
+                                <h3>United Kingdom</h3>
+                                <p>European market development, trademark registrations and support</p>
+                                <p class="detail-cities">London, Manchester</p>
+                            </div>
+                            <div class="location-detail-item" data-location="Australia" data-lat="-33.8688" data-lng="151.2093">
+                                <div class="detail-marker">AU</div>
+                                <h3>Australia</h3>
+                                <p>Oceania market expansion and cross-border business consultancy</p>
+                                <p class="detail-cities">Sydney, Melbourne</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Contact Us Section -->
+            <section class="section" id="contact">
+                <div class="container contact-grid">
+                    <article class="contact-panel glass-card reveal">
+                        <span class="section-tag">Let's connect</span>
+                        <h2 style="margin-top: 1rem; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1;">Ready to elevate your systems and services?</h2>
+                        <p style="margin-top: 1rem; color: var(--muted);">
+                            Whether you need an AI-powered customer interface, internal automation, growth support or professional corporate assistance,
+                            VyomAi Solutions Pvt Ltd is ready to help you move forward.
+                        </p>
+                        <ul class="contact-list">
+                            <li>
+                                <div class="card-icon">@</div>
+                                <div>
+                                    <strong>Email</strong>
+                                    <p>info@vyomaisolutions.com</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="card-icon">P</div>
+                                <div>
+                                    <strong>Phone</strong>
+                                    <p>+91 7310441335</p>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="card-icon">O</div>
+                                <div>
+                                    <strong>Focus</strong>
+                                    <p>AI chatbots, agents, automation, marketing and legal corporate services</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </article>
+
+                    <article class="contact-panel glass-card reveal">
+                        <form class="contact-form">
+                            <div class="field-row">
+                                <input type="text" name="name" placeholder="Your name" aria-label="Your name">
+                                <input type="email" name="email" placeholder="Work email" aria-label="Work email">
+                            </div>
+                            <div class="field-row">
+                                <input type="text" name="company" placeholder="Company name" aria-label="Company name">
+                                <input type="text" name="service" placeholder="Service of interest" aria-label="Service of interest">
+                            </div>
+                            <textarea name="message" placeholder="Tell us about your project or service requirement" aria-label="Project details"></textarea>
+                            <button type="button" class="button button-primary">Request Consultation</button>
+                            <p class="mini-note">Update the placeholder contact details with your real business email, number and company information before publishing.</p>
+                        </form>
+                    </article>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container footer-grid glass-card">
+                <div>
+                    <div class="brand">
+                        <img src="/images/logo-vyom.jpeg" alt="VyomAi Solutions Logo" class="brand-logo">
+                        <span>
+                            VyomAi Solutions Pvt Ltd
+                            <small>Smart systems for modern business</small>
+                        </span>
+                    </div>
+                    <p style="margin-top: 1rem;">
+                        Professional, responsive and tech-forward digital presence for a company delivering AI, automation, marketing and corporate services.
+                    </p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Core Services</h3>
+                    <div class="footer-links">
+                        <a href="/services">AI Chatbots</a>
+                        <a href="/services">AI Agents</a>
+                        <a href="/services">Automation</a>
+                        <a href="/services">Marketing Services</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 1rem;">Company</h3>
+                    <div class="footer-links">
+                        <a href="/about">About Us</a>
+                        <a href="/about">Our Process</a>
+                        <a href="/#contact">Contact</a>
+                        <a href="/services">Legal & Corporate Services</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ========================================
+        // MEGA MENU NAVIGATION
+        // ========================================
+        const navItems = document.querySelectorAll('.nav-item.has-dropdown');
+
+        function closeAll() {
+            navItems.forEach(item => {
+                item.classList.remove('open');
+                const t = item.querySelector('.nav-trigger');
+                if (t) t.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        navItems.forEach(item => {
+            const trigger = item.querySelector('.nav-trigger');
+
+            item.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 1000) { closeAll(); item.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+            });
+            item.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 1000) { item.classList.remove('open'); trigger.setAttribute('aria-expanded', 'false'); }
+            });
+            trigger.addEventListener('click', (e) => {
+                if (window.innerWidth <= 1000) {
+                    if (item.classList.contains('open')) {
+                        return;
+                    }
+                    e.preventDefault();
+                    const wasOpen = item.classList.contains('open');
+                    closeAll();
+                    if (!wasOpen) { item.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+                }
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-links')) closeAll();
+        });
+
+        // Highlight active page link based on current URL path
+        const currentPath = window.location.pathname;
+        navItems.forEach(item => {
+            const trigger = item.querySelector('.nav-trigger');
+            if (trigger) {
+                const href = trigger.getAttribute('href');
+                if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
+                    trigger.classList.add('active');
+                }
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mainNav = document.getElementById('mainNav');
+
+        if (mobileMenuToggle && mainNav) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenuToggle.classList.toggle('active');
+                mainNav.classList.toggle('active');
+                document.body.classList.toggle('menu-open', mainNav.classList.contains('active'));
+                if (!mainNav.classList.contains('active')) closeAll();
+            });
+
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth > 1000) return;
+                    mobileMenuToggle.classList.remove('active');
+                    mainNav.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                    closeAll();
+                });
+            });
+        }
+
+        // Add scroll effect to header
+        const mainHeader = document.getElementById('mainHeader');
+        let lastScrollTop = 0;
+
+        // Logo press animation (Cursor-style pop)
+        const brandLink = document.querySelector('.brand');
+        const brandLogo = document.getElementById('brandLogo');
+
+        if (brandLink && brandLogo) {
+            brandLink.addEventListener('click', () => {
+                brandLogo.classList.remove('logo-pop');
+                void brandLogo.offsetWidth;
+                brandLogo.classList.add('logo-pop');
+            });
+            brandLogo.addEventListener('animationend', () => {
+                brandLogo.classList.remove('logo-pop');
+            });
+        }
+
+        // ========================================
+        // SERVICES SIDEBAR NAVIGATION
+        // ========================================
+        const servicesNavLinks = document.querySelectorAll('.services-nav-link');
+
+        function updateActiveServiceLink() {
+            let currentSection = '';
+            const sections = document.querySelectorAll('.services-group');
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                if (window.scrollY >= sectionTop) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+
+            servicesNavLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${currentSection}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        servicesNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        window.addEventListener('scroll', updateActiveServiceLink, { passive: true });
+        updateActiveServiceLink();
+
+
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerOffset = 80;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ========================================
+        // REVEAL ANIMATIONS
+        // ========================================
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.18 });
+
+        revealElements.forEach((element) => revealObserver.observe(element));
+
+        // ========================================
+        // LOCATION MAP INITIALIZATION
+        // ========================================
+        let map = null;
+        let markers = {};
+        let currentLocation = 'India';
+
+        function initMap() {
+            // Create map centered on the world
+            map = L.map('locationMap').setView([20, 20], 3);
+
+            // Add tile layer from OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18,
+                tileSize: 512,
+                zoomOffset: -1,
+                className: 'map-tiles'
+            }).addTo(map);
+
+            // Custom marker HTML
+            const createCustomMarker = (location) => {
+                const el = document.createElement('div');
+                el.className = 'custom-marker';
+                el.innerHTML = location.code;
+                el.onclick = () => activateLocation(location.name);
+                return el;
+            };
+
+            // Define locations with details
+            const locations = [
+                { name: 'India', code: 'IN', lat: 12.9716, lng: 77.5946 },
+                { name: 'USA', code: 'US', lat: 40.7128, lng: -74.0060 },
+                { name: 'UAE', code: 'AE', lat: 25.2048, lng: 55.2708 },
+                { name: 'Singapore', code: 'SG', lat: 1.3521, lng: 103.8198 },
+                { name: 'UK', code: 'UK', lat: 51.5074, lng: -0.1278 },
+                { name: 'Australia', code: 'AU', lat: -33.8688, lng: 151.2093 }
+            ];
+
+            // Add markers to map
+            locations.forEach((location) => {
+                const markerElement = createCustomMarker(location);
+                const marker = L.marker([location.lat, location.lng], {
+                    icon: L.divIcon({
+                        html: markerElement,
+                        className: '',
+                        iconSize: [48, 48],
+                        iconAnchor: [24, 24],
+                        popupAnchor: [0, -24]
+                    })
+                }).addTo(map);
+
+                marker.bindPopup(`<div style="text-align: center; font-weight: 700;">${location.name}</div>`, {
+                    className: 'location-popup',
+                    closeButton: false
+                });
+
+                markers[location.name] = { marker, element: markerElement };
+
+                marker.on('click', () => activateLocation(location.name));
+            });
+
+            // Set initial location
+            activateLocation('India');
+        }
+
+        function activateLocation(locationName) {
+            currentLocation = locationName;
+
+            // Update map markers
+            Object.keys(markers).forEach((name) => {
+                markers[name].element.classList.remove('active');
+            });
+            if (markers[locationName]) {
+                markers[locationName].element.classList.add('active');
+            }
+
+            // Zoom to selected location
+            const locationDetail = document.querySelector(`[data-location="${locationName}"]`);
+            if (locationDetail && map) {
+                const lat = parseFloat(locationDetail.getAttribute('data-lat'));
+                const lng = parseFloat(locationDetail.getAttribute('data-lng'));
+                map.setView([lat, lng], 5, { animate: true, duration: 0.5 });
+            }
+
+            // Update detail panel
+            document.querySelectorAll('.location-detail-item').forEach((detail) => {
+                detail.classList.remove('active');
+            });
+            const activeDetail = document.querySelector(`[data-location="${locationName}"]`);
+            if (activeDetail && activeDetail.classList.contains('location-detail-item')) {
+                activeDetail.classList.add('active');
+                // activeDetail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // Initialize map when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('locationMap')) {
+                setTimeout(initMap, 100);
+            }
+        });
+
+        // Fallback initialization
+        window.addEventListener('load', () => {
+            if (!map && document.getElementById('locationMap')) {
+                initMap();
+            }
+        });
+    </script>
+</body>
+</html>
+

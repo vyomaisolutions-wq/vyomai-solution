@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f0f9ff;
+  --foreground: #0f172a;
+}
+
+html,
+body {
+  color: var(--foreground);
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 35%, #f0f9ff 70%, #e0f2fe 100%);
+  background-attachment: fixed;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  max-width: 100vw;
+  scroll-behavior: smooth;
+}
+
+/* Glassmorphism & Modern Card Design Tokens */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(186, 230, 253, 0.85);
+  box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.12), 0 0 15px rgba(255, 255, 255, 0.8);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.22), 0 0 25px rgba(14, 165, 233, 0.15);
+  border-color: rgba(56, 189, 248, 0.7);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, #1e3a8a 0%, #0ea5e9 40%, #06b6d4 70%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.4), rgba(124, 58, 237, 0.3));
+  padding: 1px;
+}
+
+.badge-glow {
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.35);
+  animation: pulseGlow 4s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 10px rgba(14, 165, 233, 0.25); }
+  100% { box-shadow: 0 0 22px rgba(14, 165, 233, 0.6); }
+}
+
+.floating-bg-blur {
+  animation: float 8s ease-in-out infinite alternate;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg) scale(1); }
+  50% { transform: translateY(-20px) rotate(5deg) scale(1.05); }
+  100% { transform: translateY(10px) rotate(-3deg) scale(0.98); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #e0f2fe;
+}
+::-webkit-scrollbar-thumb {
+  background: #38bdf8;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0ea5e9;
+}
